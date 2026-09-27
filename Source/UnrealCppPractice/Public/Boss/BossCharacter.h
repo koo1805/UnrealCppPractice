@@ -7,6 +7,8 @@
 #include "BossCharacter.generated.h"
 
 class UBossCombatDataAsset;
+class UBossCombatComponent;
+class ABossGreatSword;
 
 UCLASS()
 class UNREALCPPPRACTICE_API ABossCharacter : public ACharacter
@@ -44,6 +46,8 @@ public:
 	bool IsDead() const { return bIsDead; }
 
 	const UBossCombatDataAsset* GetCombatData() const { return CombatData; }
+	UBossCombatComponent* GetCombatComponent() const { return CombatComponent; }
+	ABossGreatSword* GetGreatSword() const { return GreatSword; }
 
 protected:
 	// HP
@@ -75,6 +79,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Boss|Data")
 	TObjectPtr<UBossCombatDataAsset> CombatData;
 
+	// 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Boss|Combat")
+	TObjectPtr<UBossCombatComponent> CombatComponent;
+
+	// Weapon
+	// 생성할 대검 Blueprint/Class
+	UPROPERTY(EditDefaultsOnly, Category = "Boss|Weapon")
+	TSubclassOf<ABossGreatSword> GreatSwordClass;
+
+	// 현재 보스가 장착하고 있는 대검
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Boss|Weapon")
+	TObjectPtr<ABossGreatSword> GreatSword;
+
 protected:
 	// HP가 Phase 전환 조건을 만족했는지 검사
 	void CheckPhaseTransition();
@@ -90,4 +107,7 @@ protected:
 
 	// 사망 처리
 	void Die();
+
+	// 무기 스폰
+	void SpawnGreatSword();
 };

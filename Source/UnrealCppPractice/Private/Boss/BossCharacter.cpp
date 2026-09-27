@@ -3,13 +3,16 @@
 
 #include "Boss/BossCharacter.h"
 #include <Boss/Data/BossCombatDataAsset.h>
+#include <Boss/BossCombatComponent.h>
+#include <Boss/Weapon/BossGreatSword.h>
 
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	CombatComponent = CreateDefaultSubobject<UBossCombatComponent>(TEXT("BossCombatComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -29,7 +32,14 @@ void ABossCharacter::BeginPlay()
 	bIsStaggered = false;
 	bIsDead = false;
 
+	SpawnGreatSword();
+
 	UE_LOG(LogTemp, Log, TEXT("Boss Start HP: %.1f"), CurrentHP);
+
+	if (CombatComponent)
+	{
+		CombatComponent->StartAttack(EBossAttackType::Normal);
+	}
 }
 
 // 데미지
@@ -147,9 +157,15 @@ void ABossCharacter::EnterStagger()
 
 	CurrentStagger = 0.0f;
 
+	// 공격 중이었다면 현재 공격 취소
+	if (CombatComponent)
+	{
+		CombatComponent->CancelAttack();
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("Boss Staggered"));
 
-	// 이후 Animation Montage와 Behavior Tree를 연결
+	// 이후 단계에서 Stagger Montage를 연결
 }
 
 void ABossCharacter::ExitStagger()
@@ -173,5 +189,47 @@ void ABossCharacter::Die()
 
 	bIsDead = true;
 
+	// 사망 시 현재 공격 취소
+	if (CombatComponent)
+	{
+		CombatComponent->CancelAttack();
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("Boss Dead"));
+}
+
+void ABossCharacter::SpawnGreatSword()
+{
+	if (!GreatSwordClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GreatSwordClass is nullptr"));
+
+		return;
+	}
+
+
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+
+	// Sword의 Owner를 Boss로 지정
+	SpawnParams.Owner = this;
+
+	// Instigator도 Boss로 지정
+	SpawnParams.Instigator = this;
+
+	GreatSword = World->SpawnActor<ABossGreatSword>(GreatSwordClass, GetActorTransform(), SpawnParams);
+
+	if (!GreatSword)
+	{
+		return;
+	}
+
+	// Boss Skeleton의 Weapon Socket에 부착
+	GreatSword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
 }
