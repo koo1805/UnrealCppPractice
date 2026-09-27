@@ -8,7 +8,7 @@ public class UnrealCppPractice : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		//PublicIncludePaths.AddRange(new string[] { "UnrealCppPractice" });
+		PublicIncludePaths.AddRange(new string[] { "UnrealCppPractice" });
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
 
