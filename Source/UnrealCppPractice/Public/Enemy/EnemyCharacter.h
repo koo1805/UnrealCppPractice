@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+class UBehaviorTree;
+
 UCLASS()
 class UNREALCPPPRACTICE_API AEnemyCharacter : public ACharacter
 {
@@ -19,6 +21,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
+
 protected:
 	// 최대 체력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
@@ -27,4 +32,8 @@ protected:
 	// 현재 체력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
 	float CurrentHealth = 0.0f;
+
+	// 비헤이비어 트리
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
 };
