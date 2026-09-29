@@ -30,24 +30,32 @@ void AEnemyCharacter::BeginPlay()
 	CurrentHealth = MaxHealth;
 }
 
-void AEnemyCharacter::Attack()
+bool AEnemyCharacter::Attack()
 {
 	if (!AttackMontage)
 	{
-		return;
+		return false;
 	}
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 	if (!AnimInstance)
 	{
-		return;
+		return false;
+	}
+
+	// 이미 공격 몽타주가 재생중이면 건너뜀
+	if (AnimInstance->Montage_IsPlaying(AttackMontage))
+	{
+		return false;
 	}
 
 	// 새로운 공격이므로 데미지 여부 초기화
 	bHasAppliedAttackDamage = false;
 
-	AnimInstance->Montage_Play(AttackMontage);
+	const float MontageLength = AnimInstance->Montage_Play(AttackMontage);
+
+	return MontageLength > 0.0f;
 }
 
 void AEnemyCharacter::ApplyAttackDamage()

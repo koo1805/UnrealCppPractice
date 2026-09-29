@@ -19,4 +19,15 @@ public:
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+private:
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+private:
+	// 현재 이 Task를 실행중인 비헤이비어트리 컴포넌트
+	TWeakObjectPtr<UBehaviorTreeComponent> CachedOwnerComp;
+
+	// 현재 공격중인 Enemy
+	TWeakObjectPtr<class AEnemyCharacter> CachedEnemy;
 };

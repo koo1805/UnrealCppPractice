@@ -25,10 +25,13 @@ protected:
 public:
 	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 
+	UAnimMontage* GetAttackMontage() const { return AttackMontage; }
+
 	// 공격
-	void Attack();
+	bool Attack();
 
 	// AnimNotify
+	UFUNCTION(BlueprintCallable, Category = "Enemy|Combat")
 	void ApplyAttackDamage();
 
 protected:
