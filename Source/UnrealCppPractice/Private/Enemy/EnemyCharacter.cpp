@@ -3,6 +3,7 @@
 
 #include "Enemy/EnemyCharacter.h"
 #include <Enemy/EnemyAIController.h>
+#include <Enemy/Weapon/EnemyWeapon.h>
 #include <Animation/AnimInstance.h>
 #include <Kismet/GameplayStatics.h>
 #include <GameFramework/CharacterMovementComponent.h>
@@ -28,6 +29,8 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentHealth = MaxHealth;
+
+	SpawnWeapon();
 }
 
 bool AEnemyCharacter::Attack()
@@ -82,4 +85,40 @@ void AEnemyCharacter::ApplyAttackDamage()
 	bHasAppliedAttackDamage = true;
 
 	UE_LOG(LogTemp, Log, TEXT("Enemy Attack: %.1f Damage"), AttackDamage);
+}
+
+void AEnemyCharacter::SpawnWeapon()
+{
+	if (!WeaponClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WeaponClass is nullptr"));
+
+		return;
+	}
+
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+
+	// 무기의 Owner를 자신으로 지정
+	SpawnParams.Owner = this;
+
+	// Instigator도 자신으로 지정
+	SpawnParams.Instigator = this;
+
+	Weapon = World->SpawnActor<AEnemyWeapon>(WeaponClass, GetActorTransform(), SpawnParams);
+
+	if (!Weapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Weapon is nullptr"));
+		return;
+	}
+
+	// Skeleton의 Weapon Socket에 부착
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("WeaponSocket"));
 }

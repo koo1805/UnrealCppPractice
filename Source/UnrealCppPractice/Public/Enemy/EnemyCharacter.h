@@ -8,6 +8,7 @@
 
 class UBehaviorTree;
 class UAnimMontage;
+class AEnemyWeapon;
 
 UCLASS()
 class UNREALCPPPRACTICE_API AEnemyCharacter : public ACharacter
@@ -34,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Enemy|Combat")
 	void ApplyAttackDamage();
 
+	// 무기 장착
+	void SpawnWeapon();
+
 protected:
 	// 최대 체력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
@@ -58,6 +62,15 @@ protected:
 	// 공격 판정 거리
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Combat")
 	float AttackRange = 150.0f;
+
+	// 무기 클래스
+	UPROPERTY(EditDefaultsOnly, Category = "Enemy|Weapon")
+	TSubclassOf<AEnemyWeapon> WeaponClass;
+
+	// 현재 적이 장착한 무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Weapon")
+	TObjectPtr<AEnemyWeapon> Weapon;
+
 
 private:
 	// 현재 공격에 이미 데미지를 적용했는지
