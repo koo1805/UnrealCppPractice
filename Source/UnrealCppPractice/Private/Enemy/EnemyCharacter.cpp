@@ -3,6 +3,8 @@
 
 #include "Enemy/EnemyCharacter.h"
 #include <Enemy/EnemyAIController.h>
+#include <Animation/AnimInstance.h>
+#include <Kismet/GameplayStatics.h>
 #include <GameFramework/CharacterMovementComponent.h>
 
 // Sets default values
@@ -26,4 +28,50 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentHealth = MaxHealth;
+}
+
+void AEnemyCharacter::Attack()
+{
+	if (!AttackMontage)
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (!AnimInstance)
+	{
+		return;
+	}
+
+	// 새로운 공격이므로 데미지 여부 초기화
+	bHasAppliedAttackDamage = false;
+
+	AnimInstance->Montage_Play(AttackMontage);
+}
+
+void AEnemyCharacter::ApplyAttackDamage()
+{
+	if (bHasAppliedAttackDamage)
+	{
+		return;
+	}
+
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (!PlayerPawn)
+	{
+		return;
+	}
+
+	const float Distance = FVector::Dist(GetActorLocation(), PlayerPawn->GetActorLocation());
+	if (Distance > AttackRange)
+	{
+		return;
+	}
+
+	UGameplayStatics::ApplyDamage(PlayerPawn, AttackDamage, GetController(), this, UDamageType::StaticClass());
+
+	bHasAppliedAttackDamage = true;
+
+	UE_LOG(LogTemp, Log, TEXT("Enemy Attack: %.1f Damage"), AttackDamage);
 }

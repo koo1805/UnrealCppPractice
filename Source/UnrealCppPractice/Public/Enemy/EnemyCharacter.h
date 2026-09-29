@@ -7,6 +7,7 @@
 #include "EnemyCharacter.generated.h"
 
 class UBehaviorTree;
+class UAnimMontage;
 
 UCLASS()
 class UNREALCPPPRACTICE_API AEnemyCharacter : public ACharacter
@@ -24,6 +25,12 @@ protected:
 public:
 	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 
+	// 공격
+	void Attack();
+
+	// AnimNotify
+	void ApplyAttackDamage();
+
 protected:
 	// 최대 체력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
@@ -36,4 +43,20 @@ protected:
 	// 비헤이비어 트리
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	// 공격 애니메이션
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Combat")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+	// 공격력
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Combat")
+	float AttackDamage = 20.0f;
+
+	// 공격 판정 거리
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Combat")
+	float AttackRange = 150.0f;
+
+private:
+	// 현재 공격에 이미 데미지를 적용했는지
+	bool bHasAppliedAttackDamage = false;
 };
