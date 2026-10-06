@@ -93,6 +93,7 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 	}
 	else
 	{
+		// @Todo: perception Reset조건 따로 구현
 		BlackboardComponent->ClearValue(TEXT("TargetActor"));
 		UE_LOG(LogTemp, Log, TEXT("Failed Detected - TargetActor Clear"));
 

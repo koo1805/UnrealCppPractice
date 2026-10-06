@@ -28,6 +28,13 @@ public:
 
 	UAnimMontage* GetAttackMontage() const { return AttackMontage; }
 
+	UFUNCTION(BlueprintPure, Category = "Enemy|Combat")
+	bool IsInCombat() const { return bIsCombat; }
+
+	bool IsStrafeMode() const { return bIsStrafeMode; }
+
+	void SetStrafeMode(bool bEnable);
+
 	// 공격
 	bool Attack();
 
@@ -71,8 +78,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Weapon")
 	TObjectPtr<AEnemyWeapon> Weapon;
 
+	// 현재 전투 상태 여부
+	UPROPERTY(VisibleAnywhere, Category = "Enemy|Combat")
+	uint32 bIsCombat : 1;
+
+	// Strafe 여부 플래그
+	UPROPERTY(VisibleAnywhere, Category = "Enemy|Combat")
+	uint32 bIsStrafeMode : 1;
+
 
 private:
 	// 현재 공격에 이미 데미지를 적용했는지
 	bool bHasAppliedAttackDamage = false;
+
+	// Strafe Mode 전환 여부
+	//bool bIsStrafeMode = false;
 };

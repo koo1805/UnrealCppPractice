@@ -33,6 +33,27 @@ void AEnemyCharacter::BeginPlay()
 	SpawnWeapon();
 }
 
+void AEnemyCharacter::SetStrafeMode(bool bEnable)
+{
+	if (bIsStrafeMode == bEnable)
+	{
+		return;
+	}
+
+	bIsStrafeMode = bEnable;
+
+	if (bEnable)
+	{
+		bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+	else
+	{
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
+}
+
 bool AEnemyCharacter::Attack()
 {
 	if (!AttackMontage)
